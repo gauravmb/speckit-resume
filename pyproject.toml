@@ -1,0 +1,21 @@
+[project]
+name = "speckit-resume"
+version = "0.1.0"
+description = "Universal, zero-loss MCP execution and resume engine for Spec-Kit"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+speckit-resume = "src.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
