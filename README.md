@@ -126,15 +126,24 @@ You keep using standard Spec-Kit commands for planning. `speckit-resume` takes o
 
 ### Example In-Progress Checkpoint (`[~]`):
 ```markdown
-- [~] T026 [TYPE:TEST] Implement StandardDDCController
+- [~] T026 [TYPE:TEST] Implement JWT Token Verification Service
       ┌── WIP CHECKPOINT ────────────────────────────────────────────────────────┐
       │ Updated: 2026-08-22T10:30:00Z | Tool: Cursor                            │
       │ Sub-steps:                                                               │
-      │   [x] 1. Register CGDisplayRegisterReconfigurationCallback               │
-      │   [x] 2. Set up IOKit display matching                                   │
-      │   [ ] 3. Implement EDID raw byte reader                                  │
-      │   [ ] 4. Parse vendor ID, product ID, serial number                      │
-      │ Stopping Point: Line 48 in StandardDDCController.swift (readEDID stub)   │
+      │   [x] 1. Define TokenPayload interface and error types                   │
+      │   [x] 2. Implement RS256 signature verification                          │
+      │   [ ] 3. Implement Redis token revocation blacklist check                │
+      │   [ ] 4. Add unit test coverage for expired token edge cases             │
+      │ Stopping Point: Line 48 in AuthService.ts (revokeCheck stub)             │
+      └──────────────────────────────────────────────────────────────────────────┘
+```
+
+### Example Blocked Checkpoint (`[?]`):
+```markdown
+- [?] T014 [TYPE:CONFIG] Configure Stripe Webhook & Payment Gateway
+      ┌── BLOCKED: HUMAN ACTION REQUIRED ────────────────────────────────────────┐
+      │ Reason: Missing STRIPE_WEBHOOK_SECRET in .env.local                      │
+      │ Action Required: Add secret to .env.local and flip [?] to [~] to resume. │
       └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -145,7 +154,7 @@ You keep using standard Spec-Kit commands for planning. `speckit-resume` takes o
 ### Step 1: Plan with Spec-Kit
 Run your normal Spec-Kit commands in your AI chat:
 ```text
-/speckit-specify "Build external monitor brightness control"
+/speckit-specify "Build user authentication and payment checkout flow"
 /speckit-plan
 /speckit-tasks
 ```
@@ -172,35 +181,58 @@ sequenceDiagram
     
     AI->>MCP: run_quality_gate()
     MCP->>Repo: Executes local test suite from gate.json
-    MCP-->>AI: {"passed": true, "output": "Tests passed: 28"}
+    MCP-->>AI: {"passed": true, "output": "Tests passed: 14"}
     
-    AI->>MCP: complete_task("T018")
+    AI->>MCP: complete_task("T026")
     MCP->>Repo: Marks [X] in tasks.md
-    MCP-->>AI: {"success": true, "next_task": "T019"}
-    AI-->>Dev: "Task T018 verified and complete. Starting T019."
+    MCP-->>AI: {"success": true, "next_task": "T027"}
+    AI-->>Dev: "Task T026 verified and complete. Starting T027."
 ```
 
 ---
 
 ## ⚙️ Configuration Reference (`gate.json`)
 
-`gate.json` at your project root defines how quality gates are executed on your machine:
+`gate.json` at your project root defines how quality gates are executed for your specific programming language:
 
+### TypeScript / Node.js
 ```json
 {
   "version": "1.0",
-  "project_type": "swift-macos",
+  "project_type": "typescript-node",
   "commands": {
-    "test": "xcodebuild test -project ExternalDisplayController.xcodeproj -scheme ExternalDisplayController -destination 'platform=macOS' -enableCodeCoverage YES",
-    "lint": "swiftlint lint --config .swiftlint.yml",
-    "build": "xcodebuild build -project ExternalDisplayController.xcodeproj -scheme ExternalDisplayController"
-  },
-  "timeout_seconds": 180,
-  "coverage_threshold_percent": 80
+    "test": "npm test",
+    "lint": "npm run lint",
+    "build": "npm run build"
+  }
 }
 ```
 
-*Works identically for Python (`pytest`), Rust (`cargo test`), Node (`npm test`), and Go (`go test`).*
+### Python
+```json
+{
+  "version": "1.0",
+  "project_type": "python",
+  "commands": {
+    "test": "pytest",
+    "lint": "ruff check .",
+    "typecheck": "mypy ."
+  }
+}
+```
+
+### Rust
+```json
+{
+  "version": "1.0",
+  "project_type": "rust",
+  "commands": {
+    "test": "cargo test",
+    "lint": "cargo clippy -- -D warnings",
+    "build": "cargo build --release"
+  }
+}
+```
 
 ---
 
