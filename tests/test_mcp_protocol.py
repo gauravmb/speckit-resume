@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
-from server import server
+from speckit_resume.server import server
 
 
 class TestMCPProtocol(unittest.IsolatedAsyncioTestCase):

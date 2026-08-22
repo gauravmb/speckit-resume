@@ -7,8 +7,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
-from task_engine import TaskEngine
-from gate_runner import GateRunner
+from speckit_resume.task_engine import TaskEngine
+from speckit_resume.gate_runner import GateRunner
 
 
 class TestTaskEngine(unittest.TestCase):
